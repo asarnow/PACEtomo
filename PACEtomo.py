@@ -81,6 +81,7 @@ refFromPreview  = False     # Makes temporary reference from Preview image colle
 noZeroRecAli    = False     # Skip alignment of first tilt image to reference 
 autoStartTilt   = False     # Uses measured pretilt to set compensating startTilt      
 tiltTargets     = 0         # Stage tilt at which targets were selected (if not 0, it will be automatically used as startTilt!)
+skipEucentric   = False     # Must be False for tilt series!
 
 # Target montage settings
 tgtMontage      = False     # collect montage for each target using the shorter camera dimension (e.g. for square aperture montage tomography)
@@ -1113,12 +1114,13 @@ runFileName = os.path.join(curDir, fileStem + "_run" + str(counter).zfill(2) + "
 if not recover:
     log("Moving to target area...")
 
-    sem.SetCameraArea("V", "F")                                                                 # set View to Full for Eucentricity
     sem.MoveToNavItem(navID)
-    log("Refining eucentricity...")
-    sem.Eucentricity(1)
-    sem.UpdateItemZ()
-    sem.RestoreCameraSet("V")
+    if not skipEucentric:
+        sem.SetCameraArea("V", "F")  # set View to Full for Eucentricity
+        log("Refining eucentricity...")
+        sem.Eucentricity(1)
+        sem.UpdateItemZ()
+        sem.RestoreCameraSet("V")
 
     log("Realigning to target 1...")
     if alignToP:
@@ -1641,3 +1643,4 @@ log(datetime.now().strftime("%d.%m.%Y %H:%M:%S"))
 log(f"##### All tilt series completed in {totalTime} min ({perTime} min per tilt series) #####", color=3, style=1)
 sem.SaveLog()
 sem.Exit()
+
