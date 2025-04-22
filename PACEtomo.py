@@ -1414,7 +1414,8 @@ if not recover:
                     position[-1][0]["ISXali"] = AISX                                            # Save shifts to real reference
                     position[-1][0]["ISYali"] = AISY 
 
-            sem.GoToLowDoseArea("R")
+            if previewAli:
+                sem.GoToLowDoseArea("R")
         ISXset, ISYset, *_ = sem.ReportImageShift()
         SSX, SSY = sem.ReportSpecimenShift()
         sem.SetImageShift(ISX0, ISY0)                                                           # reset IS to center position    
@@ -1438,6 +1439,7 @@ if not recover:
 
         positionFocus += stepDefocus                                                            # adds defocus step between targets and resets to initial defocus if minDefocus is surpassed
         if positionFocus > minFocus0: positionFocus = focus0
+    sem.GoToLowDoseArea("R")  # Really necessary?
 
 ### Start tilt
     log("Start tilt series...", style=1)
